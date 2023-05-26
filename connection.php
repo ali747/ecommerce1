@@ -47,8 +47,10 @@ if ($result->num_rows > 0) {
     $createDbQuery = "CREATE DATABASE $dbname";
     if ($conn->query($createDbQuery) === TRUE) {
         echo "Database created successfully.";
+        $conn->select_db($dbname);
+        echo "Connection established to newly created database: $dbname";
 
-        $sql1 = "CREATE TABLE users (
+        $customer = "CREATE TABLE users (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 firstname VARCHAR(30) NOT NULL,
                 lastname VARCHAR(30) NOT NULL,
@@ -57,21 +59,46 @@ if ($result->num_rows > 0) {
                 reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )";
 
-        $sql2 = "CREATE TABLE category (
+        $result = mysqli_query($conn, $customer);
+
+        if ($result) {
+            echo "<h1>Customer Table Created</h1>";
+        } else {
+            echo "Error in Customer Table" . $conn->error;;
+        }
+
+        $category = "CREATE TABLE category (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 category_name VARCHAR(30) NOT NULL,
                 category_type VARCHAR(30) NOT NULL,
                 reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )";
 
-        $sql3 = "CREATE TABLE products (
+
+        $result = mysqli_query($conn, $category);
+
+        if ($result) {
+            echo "<h1>Category Table Created</h1>";
+        } else {
+            echo "Error in Category Table" . $conn->error;;
+        }
+
+        $products = "CREATE TABLE products (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 product_name VARCHAR(30) NOT NULL,
                 category_id int UNSIGNED,
                 reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (category_id) REFERENCES category(id)
                 )";
-        $sql4 = "CREATE TABLE orders (
+
+        $result = mysqli_query($conn, $products);
+
+        if ($result) {
+            echo "<h1>Products Table Created</h1>";
+        } else {
+            echo "Error in Products Table" . $conn->error;;
+        }
+        $orders = "CREATE TABLE orders (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 customer_id int UNSIGNED,
                 product_id int UNSIGNED,
@@ -80,7 +107,15 @@ if ($result->num_rows > 0) {
                 FOREIGN KEY (product_id) REFERENCES products(id)
 
                 )";
-        $sql5 = "CREATE TABLE order_details (
+
+        $result = mysqli_query($conn, $orders);
+
+        if ($result) {
+            echo "<h1>Orders Table Created</h1>";
+        } else {
+            echo "Error in Order Table" . $conn->error;;
+        }
+        $order_details = "CREATE TABLE order_details (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 order_id int UNSIGNED,
                 customer_id int UNSIGNED,
@@ -91,13 +126,12 @@ if ($result->num_rows > 0) {
                 FOREIGN KEY (product_id) REFERENCES products(id)
                 )";
 
-        $conn->select_db($dbname);
-        echo "Connection established to newly created database: $dbname";
+        $result = mysqli_query($conn, $order_details);
 
-        if ($conn->query($sql1) && $conn->query($sql2) && $conn->query($sql3) && $conn->query($sql4) && $conn->query($sql5)) {
-            echo "Tables Users, Products, Category, Orders, Orders Details created successfull!";
+        if ($result) {
+            echo "<h1>Customer Table Created</h1>";
         } else {
-            echo "Error creating table: " . $conn->error;
+            echo "Error in Customer Table" . $conn->error;;
         }
     } else {
         echo "Error creating database: " . $conn->error;
